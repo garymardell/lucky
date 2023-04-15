@@ -153,7 +153,7 @@ module LuckySentry
     @app_built : Bool = false
     @successful_compilations : Int32 = 0
 
-    def initialize(@build_commands : Array(String), @run_commands : Array(String), @files : Array(String), @reload_browser : Bool, @watcher : Watcher?)
+    def initialize(@build_commands : Array(String), @run_commands : Array(String), @files : Array(String), @reload_browser : Bool, @watcher : Watcher?, @on_start : Proc(Watcher, Nil)?)
     end
 
     private def build_app_processes_and_start
@@ -184,7 +184,7 @@ module LuckySentry
       if @successful_compilations == 1
         spawn do
           sleep(0.3)
-          print_running_at
+          @on_start.try &.call(watcher)
         end
       end
     end
@@ -199,35 +199,6 @@ module LuckySentry
 
     private def start_watcher
       watcher.start unless watcher.running?
-    end
-
-    private def print_running_at
-      STDOUT.puts ""
-      STDOUT.puts running_at_background
-      STDOUT.puts running_at_message.colorize.on_cyan.black
-      STDOUT.puts running_at_background
-      STDOUT.puts ""
-    end
-
-    private def running_at_background
-      extra_space_for_emoji = 1
-      (" " * (running_at_message.size + extra_space_for_emoji)).colorize.on_cyan
-    end
-
-    private def running_at_message
-      "   🎉 App running at #{running_at}   "
-    end
-
-    private def running_at
-      if reload_browser?
-        watcher.running_at || original_url
-      else
-        original_url
-      end
-    end
-
-    private def original_url
-      "http://#{Lucky::ServerSettings.host}:#{Lucky::ServerSettings.port}"
     end
 
     private def reload_watcher
@@ -344,7 +315,14 @@ class Watch < LuckyTask::Task
       build_commands: build_commands,
       run_commands: run_commands,
       reload_browser: reload_browser?,
-      watcher: watcher_class
+      watcher: watcher_class,
+      on_start: ->(watcher){
+        STDOUT.puts ""
+        STDOUT.puts running_at_background
+        STDOUT.puts running_at_message(watcher).colorize.on_cyan.black
+        STDOUT.puts running_at_background
+        STDOUT.puts ""
+      }
     )
 
     puts "Beginning to watch your project"
@@ -353,5 +331,26 @@ class Watch < LuckyTask::Task
       process_runner.scan_files
       sleep 0.1
     end
+  end
+
+  private def running_at_background
+    extra_space_for_emoji = 1
+    (" " * (running_at_message.size + extra_space_for_emoji)).colorize.on_cyan
+  end
+
+  private def running_at_message(watcher)
+    "   🎉 App running at #{running_at(watcher)}   "
+  end
+
+  private def running_at(watcher)
+    if reload_browser?
+      watcher.running_at || original_url
+    else
+      original_url
+    end
+  end
+
+  private def original_url
+    "http://#{Lucky::ServerSettings.host}:#{Lucky::ServerSettings.port}"
   end
 end
