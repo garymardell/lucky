@@ -45,4 +45,14 @@ module Lucky::HTMLBuilder
 
     options
   end
+
+  # Outputs *content* and escapes it.
+  #
+  # ```
+  # text("Hello") # => Hello
+  # text("<div>") # => &lt;div&gt;
+  # ```
+  def text(content : String | Lucky::AllowedInTags) : Nil
+    view << HTML.escape(content.to_s)
+  end
 end
