@@ -9,7 +9,7 @@ module Lucky::SpecialtyTags
   # Additional tag attributes can be passed in keyword arguments via *options*.
   def css_link(href, **options) : Nil
     options = {href: href, rel: "stylesheet", media: "screen"}.merge(options)
-    empty_tag "link", **options
+    html.empty_tag "link", **options
   end
 
   # Generates a script tag for a file at path *src*.
