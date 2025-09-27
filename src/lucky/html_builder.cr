@@ -31,4 +31,18 @@ module Lucky::HTMLBuilder
     render
     view
   end
+
+  private def merge_options(html_options, tag_attrs)
+    options = {} of String => String | Lucky::AllowedInTags
+    tag_attrs.each do |key, value|
+      options[key.to_s] = value
+    end
+
+    html_options.each do |key, value|
+      next if key == :boolean_attrs
+      options[key.to_s] = value
+    end
+
+    options
+  end
 end
