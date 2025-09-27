@@ -6,7 +6,7 @@ module Lucky::ForgeryProtectionHelpers
   # token. THis ensures that the form is safe. If you try to submit a form
   # without a CSRF token it will fail with a 403 forbidden status code.
   def csrf_hidden_input : Nil
-    input type: "hidden",
+    html.input type: "hidden",
       name: ProtectFromForgery::PARAM_KEY,
       value: ProtectFromForgery.get_token(context)
   end
@@ -17,9 +17,9 @@ module Lucky::ForgeryProtectionHelpers
   # project. They are used by Rails UJS to safely submit forms and non-GET AJAX
   # requests
   def csrf_meta_tags : Nil
-    meta name: "csrf-param",
+    html.meta name: "csrf-param",
       content: ProtectFromForgery::PARAM_KEY
-    meta name: "csrf-token",
+    html.meta name: "csrf-token",
       content: ProtectFromForgery.get_token(context)
   end
 end

@@ -18,7 +18,7 @@ module Lucky::FormHelpers
   end
 
   def submit(text : String, attrs : Array(Symbol) = [] of Symbol, **html_options) : Nil
-    input attrs, merge_options(html_options, {"type" => "submit", "value" => text})
+    html.input attrs, merge_options(html_options, {"type" => "submit", "value" => text})
   end
 
   def form_method(route) : String
@@ -41,7 +41,7 @@ module Lucky::FormHelpers
 
   private def method_override_input(route) : Nil
     unless [:post, :get].includes? route.method
-      input type: "hidden", name: "_method", value: route.method.to_s
+      html.input type: "hidden", name: "_method", value: route.method.to_s
     end
   end
 end

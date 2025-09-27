@@ -29,7 +29,7 @@ module Lucky::LinkHelpers
   end
 
   def link(to : Lucky::RouteHelper, attrs : Array(Symbol) = [] of Symbol, **html_options, &) : Nil
-    a attrs, merge_options(html_options, link_to_href(to)) do
+    html.a attrs, merge_options(html_options, link_to_href(to)) do
       yield
     end
   end
