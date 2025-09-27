@@ -3,8 +3,6 @@ require "./page_helpers/**"
 require "./mount_component"
 
 module Lucky::HTMLBuilder
-  include Lucky::BaseTags
-  include Lucky::CustomTags
   include Lucky::LinkHelpers
   include Lucky::FormHelpers
   include Lucky::SpecialtyTags
@@ -24,6 +22,10 @@ module Lucky::HTMLBuilder
   include Lucky::SvgInliner
 
   abstract def view : IO
+
+  def html
+    @html_renderer ||= Lucky::HTMLRenderer.new(view)
+  end
 
   def perform_render : IO
     render
