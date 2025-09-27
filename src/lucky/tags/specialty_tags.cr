@@ -18,7 +18,7 @@ module Lucky::SpecialtyTags
   # *options*.
   def js_link(src, **options) : Nil
     options = {src: src}.merge(options)
-    tag "script", **options
+    html.tag "script", **options
   end
 
   # Generates a meta tag to specify the character encoding as UTF-8.
@@ -27,7 +27,7 @@ module Lucky::SpecialtyTags
   # page's `<head>` as possible as some browsers only look at the first 1024
   # bytes to determine the encoding.
   def utf8_charset : Nil
-    meta charset: "utf-8"
+    html.meta charset: "utf-8"
   end
 
   # Generates a meta tag telling browsers to render the page as wide as the
@@ -39,13 +39,13 @@ module Lucky::SpecialtyTags
   # for usage details.
   def responsive_meta_tag(**options) : Nil
     options = {width: "device-width", initial_scale: "1"}.merge(options)
-    meta name: "viewport", content: build_viewport_properties(options)
+    html.meta name: "viewport", content: build_viewport_properties(options)
   end
 
   # Generates a canonical link tag to specify the "canonical" or "preferred"
   # version of a page.
   def canonical_link(href : String) : Nil
-    empty_tag "link", href: href, rel: "canonical"
+    html.empty_tag "link", href: href, rel: "canonical"
   end
 
   # Adds *string* directly to the rendered HTML with no escaping.
